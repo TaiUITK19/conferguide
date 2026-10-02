@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CVPR 2026 - ConfGuide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#0b1f6b;--blue:#1d5fd8;--line:#dfe6f3;--bg:#f5f8fe;--text:#1b2540;--muted:#5a6785;--gold:#f5b301}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Inter,"Segoe UI",Arial,sans-serif;background:#fff;color:var(--text);line-height:1.5}
+svg{display:block}
+button{font:inherit;cursor:pointer}
+a{color:inherit;text-decoration:none}
+ 
+/* Header */
+.topbar{display:flex;justify-content:space-between;align-items:center;padding:12px 80px;background:#fff;box-shadow:0 2px 10px rgba(20,40,100,.08);position:sticky;top:0;z-index:10}
+.logo{display:flex;align-items:center;gap:12px}
+.logo b{display:block;font-size:22px;color:var(--navy);line-height:1.1}
+.logo i{font-size:12px;color:var(--muted)}
+.btn-back{border:1.5px solid #9db6e8;background:#fff;color:var(--navy);padding:10px 20px;border-radius:10px;font-weight:600;font-size:15px}
+.btn-back:hover{background:var(--bg)}
+ 
+.wrap{max-width:1520px;margin:0 auto;padding:6px 78px 40px}
+ 
+/* Hero */
+.hero{position:relative;overflow:hidden;border-radius:14px;min-height:268px;padding:26px 28px;background:linear-gradient(100deg,#eaf1fd 0%,#dce9fb 45%,#bcd6f3 100%)}
+.hero .sky{position:absolute;right:0;bottom:0;width:58%;height:100%}
+.hero-text{position:relative;max-width:660px}
+.eyebrow{color:var(--blue);font-size:14px;font-weight:500}
+.hero h1{font-size:46px;font-weight:800;color:var(--navy);line-height:1.15;margin-top:6px}
+.hero h2{font-size:19px;font-weight:700;color:var(--navy);margin-bottom:6px}
+.hero p{color:var(--muted);font-size:15px}
+.tags{display:flex;gap:12px;margin:14px 0 16px;flex-wrap:wrap}
+.tag{background:#dbe7fb;color:var(--blue);padding:4px 16px;border-radius:99px;font-size:14px}
+.meta{display:flex;align-items:center;gap:12px;flex-wrap:wrap;font-size:15px;color:var(--navy)}
+.meta span{display:flex;align-items:center;gap:8px}
+.meta .dot{width:4px;height:4px;border-radius:50%;background:var(--navy)}
+.quote{position:absolute;top:26px;right:34px;text-align:right;font-style:italic;font-size:19px;color:var(--navy);line-height:1.3;z-index:2}
+.quote small{display:block;font-style:normal;font-size:14px;color:var(--muted);margin-top:8px}
+.deadline{position:absolute;left:732px;top:112px;width:192px;background:#fff;border-radius:14px;box-shadow:0 6px 20px rgba(20,40,100,.15);padding:14px 16px 12px 66px;text-align:center;z-index:2}
+.deadline svg{position:absolute;left:20px;top:20px}
+.deadline .lb{font-size:15px;color:var(--navy)}
+.deadline strong{display:block;font-size:26px;color:var(--blue);font-weight:800;line-height:1.2}
+.deadline small{font-size:14px;color:var(--muted)}
+ 
+/* Main grid */
+.main{display:grid;grid-template-columns:minmax(0,2.3fr) minmax(300px,1fr);gap:16px;margin-top:16px}
+.card{border:1px solid var(--line);border-radius:14px;padding:22px 24px;background:#fff}
+.card h3{display:flex;align-items:center;gap:12px;font-size:21px;color:var(--navy);margin-bottom:12px}
+.desc p{font-size:16px;color:#2a3553;margin-bottom:14px;max-width:960px}
+.desc hr{border:0;border-top:1px solid var(--line);margin:4px 0 16px}
+.info-title{display:flex;align-items:center;gap:10px;color:var(--blue);font-weight:700;font-size:18px;margin-bottom:12px}
+.info{display:grid;grid-template-columns:1fr 1fr;gap:12px 40px}
+.row{display:grid;grid-template-columns:28px 130px 14px 1fr;align-items:start;font-size:15px}
+.row .ic{color:var(--navy);padding-top:2px}
+.row .k{color:var(--navy)}
+.row .v{color:var(--text)}
+.row .v em{font-style:normal;color:var(--blue);font-weight:500}
+.badge{display:inline-block;background:#e3ecfb;color:var(--navy);font-weight:600;padding:4px 20px;border-radius:8px}
+ 
+/* Sidebar */
+.side{display:flex;flex-direction:column;gap:14px}
+.side .card{padding:16px}
+.btn-line{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:14px;border:1.5px solid var(--blue);background:#fff;color:var(--navy);border-radius:10px;font-size:18px;font-weight:600;transition:.15s}
+.btn-line:hover{background:var(--bg)}
+.btn-line.on{background:#fff8e1;border-color:var(--gold)}
+.star-fill{fill:none;stroke:var(--navy);stroke-width:1.8;stroke-linejoin:round;transition:.15s}
+.on .star-fill,.star-fill.on{fill:var(--gold);stroke:var(--gold)}
+.rate-box{background:var(--bg);text-align:center;padding:14px}
+.rate-box .avg{font-size:19px;font-weight:600;color:var(--navy);display:flex;justify-content:center;align-items:center;gap:6px}
+.rate-box small{color:var(--muted);font-size:14px}
+.rate-box h4{font-size:19px;color:var(--navy);margin-bottom:10px;font-weight:600}
+.stars{display:flex;justify-content:center;gap:16px}
+.star-btn{background:none;border:0;display:flex;flex-direction:column;align-items:center;gap:4px;color:var(--navy);font-size:15px;padding:0}
+.star-btn svg{width:38px;height:38px}
+.star-btn svg path{fill:none;stroke:#2d3f7a;stroke-width:1.5;stroke-linejoin:round;transition:.12s}
+.star-btn.lit svg path{fill:var(--gold);stroke:var(--gold)}
+#rateMsg{margin-top:10px;font-size:14px;color:var(--blue);min-height:20px}
+ 
+/* Related */
+.related{margin-top:28px}
+.related>h3{display:flex;align-items:center;gap:12px;font-size:21px;color:var(--navy);margin-bottom:14px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.rc{position:relative;display:flex;gap:12px;border:1px solid var(--line);border-radius:12px;padding:10px;background:#fff;transition:.15s}
+.rc:hover{box-shadow:0 6px 18px rgba(20,40,100,.12);transform:translateY(-2px)}
+.thumb{flex:0 0 140px;height:104px;border-radius:8px;position:relative;overflow:hidden;color:#fff}
+.thumb b{position:absolute;left:8px;bottom:6px;font-size:19px;font-weight:800;line-height:1.05;text-shadow:0 1px 4px rgba(0,0,0,.5)}
+.rc .body{flex:1;min-width:0;display:flex;flex-direction:column}
+.rc h5{font-size:15px;color:var(--navy);font-weight:700;padding-right:56px}
+.rc .full{font-size:13px;color:var(--muted);line-height:1.35;margin:2px 0 6px}
+.rc .tg{display:flex;gap:6px;flex-wrap:wrap}
+.rc .tg span{background:#e9f0fc;color:var(--blue);font-size:11.5px;padding:2px 10px;border-radius:99px}
+.rc .bottom{display:flex;justify-content:space-between;align-items:center;margin-top:auto;padding-top:8px}
+.days{position:absolute;top:10px;right:10px;background:#e3f6ec;color:#1c8a56;font-size:12.5px;padding:2px 12px;border-radius:99px}
+.save-sm{display:flex;align-items:center;gap:6px;border:1.5px solid var(--blue);background:#fff;color:var(--navy);border-radius:8px;padding:3px 16px;font-size:13px;font-weight:500}
+.save-sm svg{width:14px;height:14px}
+.save-sm path{fill:none;stroke:var(--navy);stroke-width:2;stroke-linejoin:round}
+.save-sm.on{background:#fff8e1;border-color:var(--gold)}
+.save-sm.on path{fill:var(--gold);stroke:var(--gold)}
+.rank{background:#e3ecfb;color:var(--navy);font-weight:700;border-radius:8px;padding:3px 14px;font-size:15px}
+ 
+/* Trang đánh giá */
+.rate-box.clickable{cursor:pointer;transition:.15s}
+.rate-box.clickable:hover,.rate-box.clickable:focus-visible{border-color:var(--blue);box-shadow:0 4px 14px rgba(29,95,216,.15);outline:none}
+.rv-page-title{font-size:26px;color:var(--navy);margin:22px 0 16px}
+.rv-summary{display:flex;gap:40px;align-items:center;flex-wrap:wrap;background:var(--bg)}
+.rv-score{text-align:center;min-width:170px}
+.rv-score strong{display:block;font-size:56px;line-height:1;color:var(--navy);font-weight:800}
+.rv-stars-lg{display:flex;justify-content:center;gap:4px;margin:8px 0 4px}
+.rv-score small{color:var(--muted);font-size:14px}
+.rv-bars{flex:1;min-width:260px;max-width:560px;display:flex;flex-direction:column;gap:8px}
+.bar-row{display:grid;grid-template-columns:44px 1fr 40px;align-items:center;gap:10px;font-size:14px;color:var(--navy)}
+.bar-row .track{height:10px;background:#dfe7f6;border-radius:99px;overflow:hidden}
+.bar-row .fill{height:100%;background:var(--gold);border-radius:99px}
+.bar-row .n{text-align:right;color:var(--muted)}
+.rv-list-title{font-size:20px;color:var(--navy);margin:26px 0 12px}
+.rv{display:flex;gap:14px;border:1px solid var(--line);border-radius:12px;padding:16px 18px;background:#fff;margin-bottom:12px}
+.av{flex:0 0 44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px}
+.rv-body{flex:1;min-width:0}
+.rv-top{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.rv-top b{color:var(--navy);font-size:16px}
+.rv-stars{display:flex;gap:2px}
+.rv-stars svg{width:18px;height:18px}
+.rv-stars path{fill:none;stroke:#9aa7c4;stroke-width:1.6;stroke-linejoin:round}
+.rv-stars .f path{fill:var(--gold);stroke:var(--gold)}
+.rv-body p{margin:6px 0 10px;font-size:15px;color:#2a3553;max-width:820px}
+.rv-act{display:flex;gap:10px}
+.vt{display:flex;align-items:center;gap:6px;border:1.5px solid var(--line);background:#fff;color:var(--muted);border-radius:99px;padding:4px 14px;font-size:14px;transition:.15s}
+.vt:hover{background:var(--bg)}
+.vt svg{width:17px;height:17px}
+.vt.dislike svg{transform:rotate(180deg)}
+.vt path{fill:none;stroke:currentColor;stroke-width:2;stroke-linejoin:round}
+.vt.like.on{background:#e3ecfb;border-color:var(--blue);color:var(--blue)}
+.vt.dislike.on{background:#fdeaea;border-color:#d64545;color:#d64545}
+.vt.on path{fill:currentColor}
+ 
+/* ===== Luồng sáng chạy theo chuột ===== */
+.fx-halo,.fx-core{position:fixed;left:0;top:0;pointer-events:none;z-index:9;border-radius:50%;opacity:0;transition:opacity .4s ease;will-change:transform}
+.fx-halo{width:560px;height:560px;margin:-280px 0 0 -280px;background:radial-gradient(circle,rgba(29,95,216,.14) 0%,rgba(29,95,216,.06) 38%,rgba(29,95,216,0) 70%)}
+.fx-core{width:34px;height:34px;margin:-17px 0 0 -17px;background:radial-gradient(circle,rgba(70,140,255,.55) 0%,rgba(70,140,255,.2) 45%,rgba(70,140,255,0) 72%)}
+.fx-on .fx-halo,.fx-on .fx-core{opacity:1}
+
+/* Hero: vầng sáng trắng + lưới kẻ chỉ hiện quanh con trỏ */
+.hero::before,.hero::after{content:"";position:absolute;inset:0;pointer-events:none;z-index:1;opacity:0;transition:opacity .4s ease}
+.hero::before{background:radial-gradient(380px circle at var(--mx,50%) var(--my,50%),rgba(255,255,255,.75),rgba(255,255,255,0) 65%)}
+.hero::after{background-image:linear-gradient(rgba(29,95,216,.22) 1px,transparent 1px),linear-gradient(90deg,rgba(29,95,216,.22) 1px,transparent 1px);background-size:48px 48px;-webkit-mask-image:radial-gradient(300px circle at var(--mx,50%) var(--my,50%),#000,transparent 70%);mask-image:radial-gradient(300px circle at var(--mx,50%) var(--my,50%),#000,transparent 70%)}
+.hero.hero-on::before,.hero.hero-on::after{opacity:1}
+.hero-text{z-index:3}
+
+/* Thẻ: viền sáng + ánh sáng nhẹ chạy theo chuột */
+.card,.rv{position:relative}
+.card::before,.rc::before,.rv::before{content:"";position:absolute;inset:-1px;border-radius:inherit;padding:1.5px;pointer-events:none;opacity:0;transition:opacity .3s ease;background:radial-gradient(220px circle at var(--x,50%) var(--y,50%),rgba(29,95,216,.95),rgba(29,95,216,0) 70%);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);mask-composite:exclude}
+.card::after,.rc::after,.rv::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;opacity:0;transition:opacity .3s ease;background:radial-gradient(260px circle at var(--x,50%) var(--y,50%),rgba(29,95,216,.07),rgba(29,95,216,0) 70%)}
+.card:hover::before,.card:hover::after,.rc:hover::before,.rc:hover::after,.rv:hover::before,.rv:hover::after{opacity:1}
+@media (hover:none),(prefers-reduced-motion:reduce){.fx-halo,.fx-core{display:none}}
+
+@media(max-width:1100px){
+ .topbar{padding:12px 20px}.wrap{padding:6px 16px 30px}
+ .main{grid-template-columns:1fr}.grid{grid-template-columns:repeat(2,1fr)}
+ .deadline{position:relative;left:0;top:0;margin:16px 0 0;width:auto;max-width:240px}
+ .hero .sky{opacity:.35;width:100%}.quote{display:none}.info{grid-template-columns:1fr}
+}
+@media(max-width:700px){.grid{grid-template-columns:1fr}.hero h1{font-size:34px}.stars{gap:8px}.star-btn svg{width:32px;height:32px}}
+</style>
+</head>
+<body>
+<div class="fx-halo" aria-hidden="true"></div>
+<div class="fx-core" aria-hidden="true"></div>
+ 
+<header class="topbar">
+  <div class="logo">
+    <svg width="46" height="38" viewBox="0 0 46 38"><path d="M23 2 2 12l21 10 21-10z" fill="#0b1f6b"/><path d="M10 18v8c0 4 6 8 13 8s13-4 13-8v-8l-13 6z" fill="#1d5fd8"/><path d="M42 14v12" stroke="#0b1f6b" stroke-width="2.5"/></svg>
+    <div><b>ConfGuide</b><i>Find the Right Place for Your Research</i></div>
+  </div>
+  <button class="btn-back" id="backBtn">← Quay lại</button>
+</header>
+ 
+<main class="wrap">
+<div id="viewDetail">
+ 
+  <!-- Hero -->
+  <section class="hero">
+    <svg class="sky" viewBox="0 0 700 270" preserveAspectRatio="xMaxYMax slice" aria-hidden="true">
+      <polygon points="0,200 120,90 190,150 280,60 380,150 470,100 600,170 700,120 700,270 0,270" fill="#9fb9d6" opacity=".55"/>
+      <g fill="#7d9fc4"><rect x="150" y="120" width="40" height="150"/><rect x="200" y="70" width="50" height="200"/><rect x="262" y="140" width="38" height="130"/><rect x="318" y="40" width="46" height="230"/><rect x="376" y="100" width="42" height="170"/><rect x="430" y="150" width="50" height="120"/><rect x="500" y="90" width="38" height="180"/><rect x="552" y="130" width="46" height="140"/></g>
+      <circle cx="590" cy="215" r="46" fill="#cfe0f2" opacity=".9"/>
+      <rect x="0" y="250" width="700" height="20" fill="#5f87b3" opacity=".7"/>
+    </svg>
+ 
+    <div class="hero-text">
+      <div class="eyebrow">HỘI NGHỊ QUỐC TẾ HÀNG ĐẦU VỀ THỊ GIÁC MÁY TÍNH</div>
+      <h1>CVPR 2026</h1>
+      <h2>IEEE/CVF Conference on Computer Vision and Pattern Recognition</h2>
+      <p>Hội nghị hàng đầu thế giới về thị giác máy tính và nhận dạng mẫu, thu hút cộng đồng nghiên cứu toàn cầu với những công trình tiên tiến và có ảnh hưởng lớn.</p>
+      <div class="tags"><span class="tag">computer vision</span><span class="tag">deep learning</span><span class="tag">multimodal</span></div>
+      <div class="meta">
+        <span><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1d5fd8" stroke-width="2"><path d="M12 22s7-6.5 7-12a7 7 0 0 0-14 0c0 5.5 7 12 7 12z" fill="#1d5fd8"/><circle cx="12" cy="10" r="2.5" fill="#fff" stroke="none"/></svg>Vancouver, Canada</span>
+        <i class="dot"></i>
+        <span><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1d5fd8" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>14 – 19 Jun 2026</span>
+        <i class="dot"></i>
+        <span><svg width="20" height="20" viewBox="0 0 24 24" fill="#1d5fd8"><rect x="3" y="13" width="4" height="8"/><rect x="10" y="8" width="4" height="13"/><rect x="17" y="3" width="4" height="18"/></svg>Rank A</span>
+      </div>
+    </div>
+ 
+    <div class="deadline">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#1d5fd8" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>
+      <div class="lb">Hạn nộp bài còn</div>
+      <strong>45 ngày</strong>
+      <small>(15 Jan 2026)</small>
+    </div>
+ 
+    <div class="quote">“Advancing computer vision<br>for a more open world.”<small>— CVPR 2026</small></div>
+  </section>
+ 
+  <!-- Main -->
+  <div class="main">
+    <section class="card desc">
+      <h3><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#1d5fd8" stroke-width="1.8"><path d="M6 2h8l5 5v15H6z"/><path d="M14 2v5h5M9 12h7M9 16h7"/></svg>Mô tả chi tiết hội nghị</h3>
+      <p>CVPR (IEEE/CVF Conference on Computer Vision and Pattern Recognition) là hội nghị quốc tế uy tín nhất thế giới trong lĩnh vực thị giác máy tính và nhận dạng mẫu. Được tổ chức thường niên bởi IEEE và Computer Vision Foundation (CVF), CVPR là diễn đàn hàng đầu để công bố các nghiên cứu đột phá, chia sẻ ý tưởng mới và thúc đẩy hợp tác học thuật giữa các nhà nghiên cứu, kỹ sư và chuyên gia trong lĩnh vực trí tuệ nhân tạo và thị giác máy tính.</p>
+      <p>CVPR 2026 sẽ được tổ chức tại Vancouver, Canada, quy tụ các nhà nghiên cứu, học giả và chuyên gia từ khắp nơi trên thế giới. Hội nghị bao gồm các phiên báo cáo khoa học, hội thảo chuyên đề (workshops), bài giảng mới (tutorials), và các sự kiện kết nối cộng đồng nghiên cứu.</p>
+      <hr>
+      <div class="info-title"><svg width="24" height="24" viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#1d5fd8"/><rect x="11" y="10" width="2" height="8" fill="#fff"/><circle cx="12" cy="7" r="1.4" fill="#fff"/></svg>Thông tin chi tiết</div>
+      <div class="info">
+        <div class="row"><span class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="#0b1f6b"><path d="M12 22s7-6.5 7-12a7 7 0 0 0-14 0c0 5.5 7 12 7 12z"/><circle cx="12" cy="10" r="2.5" fill="#fff"/></svg></span><span class="k">Địa điểm</span><span>:</span><span class="v">Vancouver, Canada</span></div>
+        <div class="row"><span class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0b1f6b" stroke-width="2"><rect x="2" y="4" width="20" height="13" rx="2"/><path d="M8 21h8M12 17v4"/></svg></span><span class="k">Hình thức</span><span>:</span><span class="v">Trực tiếp (In-person)</span></div>
+        <div class="row"><span class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0b1f6b" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg></span><span class="k">Ngày tổ chức</span><span>:</span><span class="v">14 – 19 Jun 2026</span></div>
+        <div class="row"><span class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="#0b1f6b"><circle cx="9" cy="8" r="3.5"/><path d="M2 21c0-4 3-6 7-6s7 2 7 6z"/><circle cx="17" cy="9" r="2.6"/><path d="M17 14c3 0 5 1.8 5 5h-4"/></svg></span><span class="k">Nhà xuất bản / tổ chức</span><span>:</span><span class="v">IEEE / Computer Vision Foundation (CVF)</span></div>
+        <div class="row"><span class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0b1f6b" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span><span class="k">Hạn nộp bài</span><span>:</span><span class="v">15 Jan 2026 <em>(còn 45 ngày)</em></span></div>
+        <div class="row"><span class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="#0b1f6b"><path d="M3 12V3h9l9 9-9 9z"/><circle cx="7.5" cy="7.5" r="1.5" fill="#fff"/></svg></span><span class="k">Lĩnh vực</span><span>:</span><span class="v">Computer Vision, Pattern Recognition, Machine Learning, Artificial Intelligence</span></div>
+        <div class="row"><span class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0b1f6b" stroke-width="2" stroke-linejoin="round"><path d="M12 2.5l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.4 6.1 20.5l1.2-6.5L2.500 9.400l6.600-.9z"/></svg></span><span class="k">Xếp hạng</span><span>:</span><span class="v"><span class="badge">A</span></span></div>
+      </div>
+    </section>
+ 
+    <aside class="side">
+      <div class="card">
+        <button class="btn-line" id="saveBtn" aria-pressed="false">
+          <svg width="24" height="24" viewBox="0 0 24 24"><path class="star-fill" d="M12 2.500l2.900 6 6.600.9-4.800 4.600 1.200 6.500L12 17.400 6.100 20.500l1.200-6.500L2.500 9.400l6.600-.9z"/></svg>
+          <span id="saveText">Lưu hội nghị này</span>
+        </button>
+      </div>
+      <div class="card rate-box clickable" id="openReviews" role="link" tabindex="0" title="Xem tất cả đánh giá">
+        <div class="avg">Đánh giá:
+          <svg width="20" height="20" viewBox="0 0 24 24"><path d="M12 2.500l2.900 6 6.600.9-4.800 4.600 1.200 6.500L12 17.400 6.100 20.500l1.200-6.500L2.500 9.400l6.600-.9z" fill="#0b1f6b"/></svg>
+          <svg width="20" height="20" viewBox="0 0 24 24" style="margin-left:-4px"><path d="M12 2.500l2.900 6 6.600.9-4.800 4.600 1.200 6.500L12 17.400 6.100 20.500l1.200-6.500L2.500 9.400l6.600-.9z" fill="#0b1f6b"/></svg>
+          <svg width="20" height="20" viewBox="0 0 24 24" style="margin-left:-4px"><path d="M12 2.500l2.900 6 6.600.9-4.800 4.600 1.200 6.500L12 17.400 6.100 20.500l1.200-6.500L2.500 9.400l6.600-.9z" fill="#0b1f6b"/></svg>
+          <svg width="20" height="20" viewBox="0 0 24 24" style="margin-left:-4px"><path d="M12 2.500l2.900 6 6.600.9-4.800 4.600 1.200 6.500L12 17.400 6.100 20.500l1.200-6.500L2.500 9.400l6.600-.9z" fill="#0b1f6b"/></svg>
+          <svg width="20" height="20" viewBox="0 0 24 24" style="margin-left:-4px"><path d="M12 2.500l2.900 6 6.600.9-4.800 4.600 1.200 6.500L12 17.400 6.100 20.500l1.200-6.500L2.500 9.400l6.600-.9z" fill="none" stroke="#0b1f6b" stroke-width="1.600" stroke-linejoin="round"/></svg>
+          (4.2)
+        </div>
+        <small>Dựa trên 128 đánh giá từ cộng đồng</small>
+      </div>
+      <div class="card rate-box">
+        <h4>Chấm điểm của bạn</h4>
+        <div class="stars" id="stars"></div>
+        <div id="rateMsg" aria-live="polite"></div>
+      </div>
+      <div class="card">
+        <a class="btn-line" href="#" id="webBtn">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1d5fd8" stroke-width="2" stroke-linecap="round"><path d="M10 14a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1"/><path d="M14 10a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1"/></svg>
+          Website chính thức
+        </a>
+      </div>
+    </aside>
+  </div>
+ 
+  <!-- Related -->
+  <section class="related">
+    <h3><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#1d5fd8" stroke-width="1.8"><path d="M5 3h13v15H7a2 2 0 0 0-2 2z"/><path d="M5 20a2 2 0 0 0 2 2h11M9 8h6M9 12h6"/></svg>Hội nghị liên quan (cùng chủ đề)</h3>
+    <div class="grid" id="relGrid"></div>
+  </section>
+</div>
+ 
+<!-- ========== TRANG ĐÁNH GIÁ ========== -->
+<div id="viewReviews" hidden>
+  <h2 class="rv-page-title">Đánh giá của cộng đồng · CVPR 2026</h2>
+  <section class="card rv-summary">
+    <div class="rv-score">
+      <strong id="rvAvg">4.2</strong>
+      <div class="rv-stars-lg" id="rvStars"></div>
+      <small id="rvTotal"></small>
+    </div>
+    <div class="rv-bars" id="rvBars"></div>
+  </section>
+  <h3 class="rv-list-title" id="rvListTitle"></h3>
+  <div id="rvList"></div>
+</div>
+</main>
+ 
+<script>
+const STAR = "M12 2.5l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.4 6.1 20.5l1.2-6.5L2.5 9.4l6.6-.9z";
+ 
+/* ---- Lưu hội nghị: khung -> vàng ---- */
+const saveBtn = document.getElementById('saveBtn');
+saveBtn.addEventListener('click', () => {
+  const on = saveBtn.classList.toggle('on');
+  saveBtn.setAttribute('aria-pressed', on);
+  document.getElementById('saveText').textContent = on ? 'Đã lưu hội nghị' : 'Lưu hội nghị này';
+});
+ 
+/* ---- Chấm điểm 5 sao ---- */
+const starsBox = document.getElementById('stars');
+const rateMsg = document.getElementById('rateMsg');
+let rating = 0;
+for (let i = 1; i <= 5; i++) {
+  const b = document.createElement('button');
+  b.className = 'star-btn';
+  b.setAttribute('aria-label', i + ' sao');
+  b.innerHTML = `<svg viewBox="0 0 24 24"><path d="${STAR}"/></svg><span>${i}</span>`;
+  b.addEventListener('mouseenter', () => paint(i));
+  b.addEventListener('click', () => {
+    rating = (rating === i) ? 0 : i;
+    paint(rating);
+    rateMsg.textContent = rating ? `Bạn đã chấm ${rating}/5 sao. Cảm ơn bạn!` : '';
+  });
+  starsBox.appendChild(b);
+}
+starsBox.addEventListener('mouseleave', () => paint(rating));
+function paint(n) {
+  [...starsBox.children].forEach((b, idx) => b.classList.toggle('lit', idx < n));
+}
+ 
+/* ---- Hội nghị liên quan ---- */
+const related = [
+  {s:'ICCV 2025', n:'IEEE/CVF International Conference on Computer Vision', t:['computer vision','deep learning','3D vision'], d:45, r:'A', c:['#c9863f','#3b5f8f']},
+  {s:'ECCV 2026', n:'European Conference on Computer Vision', t:['computer vision','representation learning','AI'], d:78, r:'A', c:['#b5651d','#5b86b5']},
+  {s:'WACV 2026', n:'IEEE/CVF Winter Conference on Applications of Computer Vision', t:['computer vision','medical imaging','robotics'], d:112, r:'B', c:['#5f86b8','#c9d6e6']},
+  {s:'NeurIPS 2026', n:'Conference on Neural Information Processing Systems', t:['machine learning','deep learning','AI'], d:60, r:'A', c:['#3a2f7d','#7a5cc4']},
+  {s:'ICML 2026', n:'International Conference on Machine Learning', t:['machine learning','optimization','theory'], d:95, r:'A', c:['#1f6f6b','#4ab3a8']},
+  {s:'AAAI 2027', n:'AAAI Conference on Artificial Intelligence', t:['artificial intelligence','reasoning','multimodal'], d:130, r:'A', c:['#8a2d4d','#d6728f']},
+  {s:'BMVC 2026', n:'British Machine Vision Conference', t:['computer vision','pattern recognition','segmentation'], d:150, r:'B', c:['#2d4a8a','#7aa0d6']},
+  {s:'ACCV 2026', n:'Asian Conference on Computer Vision', t:['computer vision','object detection','AI'], d:170, r:'B', c:['#a63a2b','#e59a6b']},
+  {s:'MICCAI 2026', n:'Medical Image Computing and Computer Assisted Intervention', t:['medical imaging','deep learning','segmentation'], d:88, r:'A', c:['#1f5d8f','#6bb6d6']},
+  {s:'ICLR 2027', n:'International Conference on Learning Representations', t:['representation learning','deep learning','generative'], d:105, r:'A', c:['#3d6b2e','#9bcf6a']},
+  {s:'ICRA 2027', n:'IEEE International Conference on Robotics and Automation', t:['robotics','computer vision','control'], d:140, r:'A', c:['#555f6d','#a9b6c6']},
+  {s:'ACM MM 2026', n:'ACM International Conference on Multimedia', t:['multimodal','video','retrieval'], d:72, r:'A', c:['#7a3d8f','#d68ad6']}
+];
+const grid = document.getElementById('relGrid');
+grid.innerHTML = related.map((c, i) => `
+  <article class="rc">
+    <div class="thumb" style="background:linear-gradient(160deg,${c.c[1]},${c.c[0]})"><b>${c.s.replace(' ', '<br>')}</b></div>
+    <div class="body">
+      <h5>${c.s}</h5>
+      <div class="full">${c.n}</div>
+      <div class="tg">${c.t.map(x => `<span>${x}</span>`).join('')}</div>
+      <div class="bottom">
+        <button class="save-sm" data-i="${i}"><svg viewBox="0 0 24 24"><path d="${STAR}"/></svg>Lưu</button>
+        <span class="rank">${c.r}</span>
+      </div>
+    </div>
+    <span class="days">còn ${c.d}d</span>
+  </article>`).join('');
+grid.addEventListener('click', e => {
+  const b = e.target.closest('.save-sm');
+  if (!b) return;
+  const on = b.classList.toggle('on');
+  b.lastChild.textContent = on ? 'Đã lưu' : 'Lưu';
+});
+ 
+/* ================= TRANG ĐÁNH GIÁ ================= */
+const viewDetail = document.getElementById('viewDetail');
+const viewReviews = document.getElementById('viewReviews');
+const openBox = document.getElementById('openReviews');
+const backBtn = document.getElementById('backBtn');
+ 
+function route() {
+  const isRv = location.hash === '#danh-gia';
+  viewDetail.hidden = isRv;
+  viewReviews.hidden = !isRv;
+  window.scrollTo(0, 0);
+}
+window.addEventListener('hashchange', route);
+openBox.addEventListener('click', () => { location.hash = '#danh-gia'; });
+openBox.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); location.hash = '#danh-gia'; } });
+backBtn.addEventListener('click', () => {
+  if (location.hash === '#danh-gia') location.hash = ''; else history.back();
+});
+ 
+/* Dữ liệu 128 đánh giá (cố định, tạo bằng bộ random có seed) */
+function mulberry(seed) {
+  return () => {
+    seed |= 0; seed = seed + 0x6D2B79F5 | 0;
+    let t = Math.imul(seed ^ seed >>> 15, 1 | seed);
+    t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+    return ((t ^ t >>> 14) >>> 0) / 4294967296;
+  };
+}
+const rand = mulberry(2026);
+const pick = arr => arr[Math.floor(rand() * arr.length)];
+ 
+// 60+44+17+4+3 = 128 đánh giá, tổng 538 sao -> trung bình 4.2
+const DIST = {5: 60, 4: 44, 3: 17, 2: 4, 1: 3};
+const stars = [];
+for (const s in DIST) for (let k = 0; k < DIST[s]; k++) stars.push(+s);
+for (let i = stars.length - 1; i > 0; i--) {
+  const j = Math.floor(rand() * (i + 1));
+  [stars[i], stars[j]] = [stars[j], stars[i]];
+}
+ 
+const TEXT = {
+  5: ['Hội nghị rất uy tín, nội dung chất lượng cao, rất đáng để gửi bài.',
+      'Tổ chức chuyên nghiệp, nhiều bài keynote hay và cơ hội kết nối tốt.',
+      'Phản hồi của reviewer công tâm và rất hữu ích cho bài báo của mình.',
+      'Workshop và tutorial rất bổ ích, đặc biệt cho người mới bắt đầu.',
+      'Chất lượng bài báo thuộc hàng top, học hỏi được rất nhiều.',
+      'Chương trình sắp xếp hợp lý, địa điểm tổ chức tuyệt vời.'],
+  4: ['Hội nghị tốt nhưng tỷ lệ chấp nhận khá thấp, cần chuẩn bị kỹ.',
+      'Chương trình phong phú, tuy nhiên các phiên poster hơi đông.',
+      'Nội dung hay, chi phí tham dự hơi cao với sinh viên.',
+      'Quy trình nộp bài rõ ràng, thời gian phản hồi hơi lâu.',
+      'Rất đáng tham dự, chỉ tiếc lịch trình khá dày.'],
+  3: ['Chất lượng không đồng đều giữa các phiên báo cáo.',
+      'Số lượng bài quá nhiều nên khó theo dõi hết.',
+      'Nhận xét của reviewer đôi khi chưa thật sự chi tiết.',
+      'Hội nghị ổn nhưng mình kỳ vọng cao hơn một chút.'],
+  2: ['Phản hồi từ reviewer ngắn và chưa thuyết phục.',
+      'Quá đông, khó trao đổi trực tiếp với tác giả.'],
+  1: ['Bài bị từ chối mà nhận xét quá chung chung.',
+      'Chi phí cao, trải nghiệm không như mong đợi.']
+};
+const TAIL = ['Mình sẽ tiếp tục theo dõi các kỳ tiếp theo.', 'Nên đăng ký sớm để có giá tốt.',
+              'Phần networking khá thú vị.', 'Hy vọng năm sau tổ chức tốt hơn nữa.', '', '', ''];
+ 
+const reviews = stars.map((s, i) => ({
+  name: 'guestname' + (i + 1),
+  stars: s,
+  text: (pick(TEXT[s]) + ' ' + (s >= 3 ? pick(TAIL) : '')).trim(),
+  likes: Math.floor(rand() * 40),
+  dislikes: Math.floor(rand() * 6),
+  vote: null            // null | 'like' | 'dislike'
+}));
+ 
+/* Tóm tắt */
+const total = reviews.length;
+const avg = reviews.reduce((a, r) => a + r.stars, 0) / total;
+document.getElementById('rvAvg').textContent = avg.toFixed(1);
+document.getElementById('rvTotal').textContent = `${total} đánh giá`;
+document.getElementById('rvListTitle').textContent = `Tất cả đánh giá (${total})`;
+document.getElementById('rvStars').innerHTML = [1, 2, 3, 4, 5].map(n => {
+  const filled = n <= Math.round(avg);
+  return `<svg width="24" height="24" viewBox="0 0 24 24"><path d="${STAR}" fill="${filled ? '#0b1f6b' : 'none'}" stroke="#0b1f6b" stroke-width="1.6" stroke-linejoin="round"/></svg>`;
+}).join('');
+document.getElementById('rvBars').innerHTML = [5, 4, 3, 2, 1].map(s => {
+  const n = reviews.filter(r => r.stars === s).length;
+  return `<div class="bar-row"><span>${s} sao</span><div class="track"><div class="fill" style="width:${n / total * 100}%"></div></div><span class="n">${n}</span></div>`;
+}).join('');
+ 
+/* Danh sách 128 đánh giá */
+const THUMB = 'M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z';
+const rvList = document.getElementById('rvList');
+rvList.innerHTML = reviews.map((r, i) => {
+  const hue = (i * 47) % 360;
+  const starsHtml = [1, 2, 3, 4, 5].map(n => `<svg viewBox="0 0 24 24" class="${n <= r.stars ? 'f' : ''}"><path d="${STAR}"/></svg>`).join('');
+  return `
+  <article class="rv" data-i="${i}">
+    <div class="av" style="background:hsl(${hue},70%,90%);color:hsl(${hue},45%,28%)">G${i + 1}</div>
+    <div class="rv-body">
+      <div class="rv-top"><b>${r.name}</b><span class="rv-stars" aria-label="${r.stars} sao">${starsHtml}</span></div>
+      <p>${r.text}</p>
+      <div class="rv-act">
+        <button class="vt like" data-act="like" aria-pressed="false" aria-label="Thích"><svg viewBox="0 0 24 24"><path d="${THUMB}"/></svg><span>${r.likes}</span></button>
+        <button class="vt dislike" data-act="dislike" aria-pressed="false" aria-label="Không thích"><svg viewBox="0 0 24 24"><path d="${THUMB}"/></svg><span>${r.dislikes}</span></button>
+      </div>
+    </div>
+  </article>`;
+}).join('');
+ 
+/* Like / Dislike: chỉ chọn được một trong hai */
+rvList.addEventListener('click', e => {
+  const btn = e.target.closest('.vt');
+  if (!btn) return;
+  const item = btn.closest('.rv');
+  const r = reviews[+item.dataset.i];
+  const act = btn.dataset.act;
+  const key = a => (a === 'like' ? 'likes' : 'dislikes');
+ 
+  if (r.vote === act) {            // bấm lại nút đang bật -> tắt
+    r[key(act)]--; r.vote = null;
+  } else {
+    if (r.vote) r[key(r.vote)]--;  // tắt nút còn lại
+    r[key(act)]++; r.vote = act;
+  }
+  ['like', 'dislike'].forEach(a => {
+    const b = item.querySelector('.vt.' + a);
+    b.classList.toggle('on', r.vote === a);
+    b.setAttribute('aria-pressed', r.vote === a);
+    b.querySelector('span').textContent = r[key(a)];
+  });
+});
+ 
+/* ================= LUỒNG SÁNG CHẠY THEO CHUỘT ================= */
+(() => {
+  if (matchMedia('(hover: none)').matches) return;          // thiết bị cảm ứng: bỏ qua
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const halo = document.querySelector('.fx-halo');
+  const core = document.querySelector('.fx-core');
+  const hero = document.querySelector('.hero');
+  const body = document.body;
+
+  // Thời hằng làm mượt (ms): nhỏ = bám sát chuột, lớn = trôi chậm hơn.
+  // Muốn mượt/chậm hơn thì tăng số; muốn nhanh hơn thì giảm số.
+  const TAU = { halo: 170, core: 65, hero: 120 };
+
+  const target = { x: innerWidth / 2, y: innerHeight / 2 };
+  const pos = { halo: { ...target }, core: { ...target }, hero: { ...target } };
+  let raf = 0, last = 0, seen = false;
+
+  function step(now) {
+    const dt = Math.min(now - last, 50);                    // chống nhảy vọt khi tab bị treo
+    last = now;
+    let moving = false;
+    for (const k in pos) {
+      const p = pos[k];
+      const a = reduce ? 1 : 1 - Math.exp(-dt / TAU[k]);    // không phụ thuộc tần số quét màn hình
+      p.x += (target.x - p.x) * a;
+      p.y += (target.y - p.y) * a;
+      if (Math.abs(target.x - p.x) > 0.1 || Math.abs(target.y - p.y) > 0.1) moving = true;
+    }
+    halo.style.transform = `translate3d(${pos.halo.x}px,${pos.halo.y}px,0)`;
+    core.style.transform = `translate3d(${pos.core.x}px,${pos.core.y}px,0)`;
+    const r = hero.getBoundingClientRect();
+    hero.style.setProperty('--mx', (pos.hero.x - r.left).toFixed(1) + 'px');
+    hero.style.setProperty('--my', (pos.hero.y - r.top).toFixed(1) + 'px');
+    raf = moving ? requestAnimationFrame(step) : 0;         // đứng yên thì dừng vòng lặp, không tốn CPU
+  }
+  const kick = () => { if (!raf) { last = performance.now(); raf = requestAnimationFrame(step); } };
+
+  addEventListener('pointermove', e => {
+    if (e.pointerType === 'touch') return;
+    target.x = e.clientX; target.y = e.clientY;
+    if (!seen) {                                            // lần đầu: đặt ngay tại chuột, không bay từ giữa màn hình
+      seen = true;
+      for (const k in pos) pos[k] = { x: target.x, y: target.y };
+    }
+    body.classList.add('fx-on');
+
+    const h = hero.getBoundingClientRect();
+    hero.classList.toggle('hero-on', e.clientX >= h.left && e.clientX <= h.right && e.clientY >= h.top && e.clientY <= h.bottom);
+
+    const el = e.target.closest && e.target.closest('.card, .rc, .rv');
+    if (el) {
+      const b = el.getBoundingClientRect();
+      el.style.setProperty('--x', (e.clientX - b.left).toFixed(1) + 'px');
+      el.style.setProperty('--y', (e.clientY - b.top).toFixed(1) + 'px');
+    }
+    kick();
+  }, { passive: true });
+
+  document.documentElement.addEventListener('mouseleave', () => {
+    body.classList.remove('fx-on');
+    hero.classList.remove('hero-on');
+  });
+  addEventListener('scroll', kick, { passive: true });      // cuộn trang thì vị trí trong hero cũng cập nhật
+})();
+
+route();
+</script>
+</body>
+</html>
